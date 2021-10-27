@@ -1,0 +1,99 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+
+        html body .fullscreen {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="fullscreen" >
+        Section 1
+        <ul>
+            <li><a href="http://google.com">Link to external page</a></li>
+            <li><a href="#section2">Link to text anchor</a></li>
+        </ul>
+    </div>
+
+
+    <div class="fullscreen" id="section2">
+        Section 2
+
+    </div>
+
+
+
+    <script>
+        //PAGES
+        window.addEventListener('load', (event) => {
+            setTimeout(function () {
+                fetch("/api/Hits", {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            
+                            "title": document.title,
+                            "userAgent": window.navigator.userAgent
+                            
+                        })
+                    })
+                    .then(function (res) {
+                        console.log(res)
+                    })
+                    .catch(function (res) {
+                        console.log(res)
+                    })
+
+            }, 500)
+
+        })
+
+        //CLICKS
+        let a = document.querySelectorAll('a')
+
+        const getCssSelectorShort = (el) => {
+            let path = [],
+                parent;
+            while (parent = el.parentNode) {
+                let tag = el.tagName,
+                    siblings;
+                path.unshift(
+                    el.id ? `#${el.id}` : (
+                        siblings = parent.children,
+                        [].filter.call(siblings, sibling => sibling.tagName === tag).length === 1 ? tag :
+                        `${tag}:nth-child(${1+[].indexOf.call(siblings, el)})`
+                    )
+                );
+                el = parent;
+            };
+            return `${path.join(' > ')}`.toLowerCase();
+        };
+
+        a.forEach(a => {
+            a.addEventListener("click", (event) => {
+                console.log(event)
+                window.lastClicked = event.target
+
+                if (event.target.id) {
+                    console.log(`clicked id: ${event.target.id}`)
+                } else {
+                    console.log('element has no id, getting unique selector')
+                    console.log(getCssSelectorShort(event.target))
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
