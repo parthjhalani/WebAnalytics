@@ -18,8 +18,9 @@ entity Hits {
   createdAt: Timestamp @cds.on.insert: $now;
   title: String not null;
   userAgent: String not null;
-  session: String ;
-  
+  session: Association to Sessions ;
+  vendor : String;
+  platform : String;
   pageID: Association to Pages
 }
 @assert.unique: {
@@ -31,39 +32,49 @@ entity Sessions {
   ipAddress: String not null;
   location:String;
   
-  hits: Association to Hits on hits.session = $self.ID
+  
 }
 
 entity Performance {
   key ID: UUID @odata.Type:'Edm.String';
   createdAt: Timestamp @cds.on.insert: $now;
-  url: String not null;
-  page: Association to one Pages on page.url = $self.url;
+  hits : Association to Hits;
+  page: Association to Pages;
   connectStart: Timestamp;
+  connectEnd: Timestamp;
   navigationStart: Timestamp;
+  loadEventStart: Timestamp;
   loadEventEnd: Timestamp;
   domLoading: Timestamp;
+  domComplete: Timestamp;
   secureConnectionStart: Timestamp;
   fetchStart: Timestamp;
   domContentLoadedEventStart: Timestamp;
+  domContentLoadedEventEnd: Timestamp;
   responseStart: Timestamp;
   responseEnd: Timestamp;
   domInteractive: Timestamp;
   domainLookupEnd: Timestamp;
   redirectStart: Timestamp;
+  redirectEnd: Timestamp;
   requestStart: Timestamp;
   unloadEventEnd: Timestamp;
   unloadEventStart: Timestamp;
-  domComplete: Timestamp;
-  domainLookupStart: Timestamp;
-  loadEventStart: Timestamp;
-  domContentLoadedEventEnd: Timestamp;
-  redirectEnd: Timestamp;
-  connectEnd: Timestamp
+  domainLookupStart: Timestamp; 
+  totPageLoadTime: Integer; 
+  connect: Integer; 
+  loadEvent: Integer; 
+  domContentLoadedEvent: Integer; 
+  redirect: Integer; 
+  response: Integer; 
+  totRequestResp: Integer; 
 }
 
 entity Clicks {
+   
   text: String;
+  createdAt: Timestamp @cds.on.insert: $now;
   selector: String;
-  session: String;
+  pageID: Association to Pages ;
+  session: Association to Sessions ;
 }

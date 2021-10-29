@@ -12,6 +12,7 @@ service ApiService
   entity Hits as projection on db.Hits;
   entity Sessions as projection on db.Sessions;
   entity Performance as projection on db.Performance;
+  entity Clicks as projection on db.Clicks;
 }
 
 // annotate ApiService.Sites with @(restrict: [

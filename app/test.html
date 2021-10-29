@@ -19,7 +19,7 @@
         Section 1
         <ul>
             <li><a href="http://google.com">Link to external page</a></li>
-            <li><a href="#section2">Link to text anchor</a></li>
+            <li><a href="#section2" id="Secition-id">Link to text anchor</a></li>
         </ul>
     </div>
 
@@ -34,18 +34,23 @@
     <script>
         //PAGES
         window.addEventListener('load', (event) => {
+           
+
             setTimeout(function () {
-                fetch("/api/Hits", {
+                fetch("/page", {
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
                         method: "POST",
                         body: JSON.stringify({
-                            
-                            "title": document.title,
-                            "userAgent": window.navigator.userAgent
-                            
+                            url: document.URL,
+                            pageTitle: document.title,
+                            userAgent: window.navigator.userAgent,
+                            vendor: window.navigator.vendor,
+                            platform: window.navigator.platform,
+                            timeOrigin: window.performance.timeOrigin,
+                            timing: window.performance.timing
                         })
                     })
                     .then(function (res) {
@@ -84,13 +89,38 @@
             a.addEventListener("click", (event) => {
                 console.log(event)
                 window.lastClicked = event.target
-
+                let selector = "";
                 if (event.target.id) {
                     console.log(`clicked id: ${event.target.id}`)
-                } else {
+                    selector = event.target.id ;
+                    } 
+                    else {
                     console.log('element has no id, getting unique selector')
-                    console.log(getCssSelectorShort(event.target))
+                    selector = (getCssSelectorShort(event.target))
                 }
+                setTimeout(function () {
+                fetch("/clicks", {
+                        headers: {
+                            
+                            'Content-Type': 'application/json'
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            url: document.URL,
+                            text: event.target.innerText,
+                            selector: selector
+                            
+                        })
+                    })
+                    .then(function (res) {
+                        console.log(res)
+                    })
+                    .catch(function (res) {
+                        console.log(res)
+                    })
+
+            }, 500)
+
             });
         });
     </script>
